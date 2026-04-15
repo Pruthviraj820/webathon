@@ -29,7 +29,22 @@ export default function Admin() {
 
   const handleVerify = async (userId, status) => {
     try {
-      await adminAPI.verifyUser(userId, status);
+      const token = localStorage.getItem('token');
+      const action = status === 'verified' ? 'approve' : 'reject';
+      const response = await fetch(`http://localhost:9080/api/admin/verify/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ action }),
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to verify user');
+      }
+
       setMsg(`User ${status} successfully`);
       loadData();
       setTimeout(() => setMsg(''), 3000);
@@ -37,7 +52,7 @@ export default function Admin() {
   };
 
   const handleBan = async (userId) => {
-    if (!confirm('Are you sure you want to ban this user?')) return;
+    if (!window.confirm('Are you sure you want to ban this user?')) return;
     try {
       await adminAPI.banUser(userId);
       setMsg('User banned');
