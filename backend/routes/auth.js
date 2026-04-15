@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { registerUser } from '../controllers/authController.js';
 
 const router = express.Router();
 
@@ -17,50 +18,12 @@ const toPublicUser = (userDoc) => {
   return obj;
 };
 
+router.get('/test', (req, res) => res.send('Auth working'));
+
 router.post('/register', async (req, res) => {
-  try {
-    const { name, email, password, age, gender, education, job, salary, religion, caste, bio, interests } =
-      req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Name, email, and password are required.' });
-    }
-
-    const existing = await User.findOne({ email: email.toLowerCase().trim() });
-    if (existing) {
-      return res.status(409).json({ message: 'An account with this email already exists.' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      age,
-      gender,
-      education,
-      job,
-      salary,
-      religion,
-      caste,
-      bio,
-      interests: Array.isArray(interests) ? interests : [],
-    });
-
-    const token = signToken(user._id);
-
-    return res.status(201).json({
-      message: 'Registration successful.',
-      token,
-      user: toPublicUser(user),
-    });
-  } catch (error) {
-    if (error.code === 11000) {
-      return res.status(409).json({ message: 'An account with this email already exists.' });
-    }
-    return res.status(500).json({ message: 'Registration failed.', error: error.message });
-  }
+  console.log('POST /api/auth/register hit');
+  console.log('Register request body:', req.body);
+  return registerUser(req, res);
 });
 
 router.post('/login', async (req, res) => {

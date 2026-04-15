@@ -169,7 +169,7 @@ export function initChatSocket(io) {
       const conversationKey = getConversationKey(userId, receiverId);
       socket.to(conversationKey).emit('user_stop_typing', { userId });
     });
-
+    //comments for understnading
     // ── Mark messages as read (real-time) ───────────────
     socket.on('mark_read', async ({ partnerId }) => {
       try {
