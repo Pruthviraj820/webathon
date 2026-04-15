@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -20,8 +19,6 @@ import adminRoutes from './routes/adminRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/user.js';
 
-dotenv.config();
-
 // __dirname polyfill for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,17 +35,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ─── Health check ────────────────────────────────────────
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ─── Advanced feature routes ─────────────────────────────
-// NOTE: Basic auth, profile, search, interest & chat routes are
-//       maintained by the other developer and should be imported
-//       here once available.
-
-// Mock auth route — temporary, for testing (remove once teammate's auth is integrated)
+// ─── Routes ──────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
-
+app.use('/api/users', userRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/verification', verificationRoutes);
@@ -57,37 +49,15 @@ app.use('/api/horoscope', horoscopeRoutes);
 app.use('/api/media', mediaRoutes);
 app.use('/api/admin', adminRoutes);
 
-// ─── Error handler (must be last) ────────────────────────
-app.use(errorHandler);
-
-// ─── Start server ────────────────────────────────────────
-const PORT = process.env.PORT || 9080;
-
-const start = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ MongoDB connected');
-
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error.message);
-    process.exit(1);
-  }
-};
-
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ ok: true });
-});
-
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-
+// ─── 404 handler ─────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found.' });
 });
 
+// ─── Error handler (must be last) ────────────────────────
+app.use(errorHandler);
+
+// ─── Start server ────────────────────────────────────────
 const PORT = process.env.PORT || 9080;
 
 const start = async () => {
@@ -100,13 +70,13 @@ const start = async () => {
     }
 
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('MongoDB connected.');
+    console.log('✅ MongoDB connected');
 
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error.message);
+    console.error('❌ Failed to start server:', error.message);
     process.exit(1);
   }
 };

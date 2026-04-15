@@ -16,13 +16,28 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema(
   {
     // ─── Auth ──────────────────────────────────────────────
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true, select: false }, // never returned by default
+    name: {
+      type: String,
+      required: [true, 'Name is required'],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+      minlength: [6, 'Password must be at least 6 characters'],
+      select: false, // never returned by default
+    },
 
     // ─── Demographics ──────────────────────────────────────
-    gender: { type: String, enum: ['male', 'female', 'other'], required: true },
-    dateOfBirth: { type: Date, required: true },
+    gender: { type: String, enum: ['male', 'female', 'other'], trim: true },
+    dateOfBirth: { type: Date },
     age: { type: Number }, // computed on save via pre-save hook
 
     // ─── Location ──────────────────────────────────────────
@@ -33,9 +48,14 @@ const userSchema = new mongoose.Schema(
     // ─── Profile ───────────────────────────────────────────
     education: { type: String, trim: true },
     occupation: { type: String, trim: true },
-    bio: { type: String, maxlength: 500 },
+    job: { type: String, trim: true },
+    salary: { type: Number },
+    religion: { type: String, trim: true },
+    caste: { type: String, trim: true },
+    bio: { type: String, maxlength: 500, trim: true },
     interests: [{ type: String, trim: true, lowercase: true }],
-    profilePhoto: { type: String }, // URL
+    profilePhoto: { type: String },  // URL (advanced upload via media route)
+    profilePic: { type: String, default: '' }, // URL (basic upload via user route)
 
     // ─── Preferences (for matching) ────────────────────────
     preferredAgeMin: { type: Number, default: 18 },
@@ -68,36 +88,6 @@ const userSchema = new mongoose.Schema(
     // ─── Admin ─────────────────────────────────────────────
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     isBanned: { type: Boolean, default: false },
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, 'Name is required'],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, 'Email is required'],
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: [true, 'Password is required'],
-      minlength: [6, 'Password must be at least 6 characters'],
-      select: false,
-    },
-    age: { type: Number },
-    gender: { type: String, trim: true },
-    education: { type: String, trim: true },
-    job: { type: String, trim: true },
-    salary: { type: Number },
-    religion: { type: String, trim: true },
-    caste: { type: String, trim: true },
-    bio: { type: String, trim: true },
-    interests: [{ type: String, trim: true }],
-    profilePic: { type: String, default: '' },
   },
   { timestamps: true }
 );
