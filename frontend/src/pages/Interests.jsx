@@ -8,6 +8,7 @@ export default function Interests() {
   const [tab, setTab] = useState('received');
   const [received, setReceived] = useState([]);
   const [sent, setSent] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState('');
 
@@ -15,6 +16,7 @@ export default function Interests() {
     Promise.all([
       interestAPI.getReceived().then(d => setReceived(d.data || [])),
       interestAPI.getSent().then(d => setSent(d.data || [])),
+      interestAPI.getMatches().then(d => setMatches(d.data || [])),
     ]).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
@@ -68,6 +70,9 @@ export default function Interests() {
             <button className={tab === 'sent' ? 'active' : ''} onClick={() => setTab('sent')}>
               Sent ({sent.length})
             </button>
+            <button className={tab === 'matches' ? 'active' : ''} onClick={() => setTab('matches')}>
+              Matches ({matches.length})
+            </button>
           </nav>
 
           <section className="int-content fade-in">
@@ -118,6 +123,31 @@ export default function Interests() {
                           <span className={`status-badge status-${i.status || 'pending'}`}>
                             {i.status || 'Pending'}
                           </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {tab === 'matches' && (
+              <>
+                {matches.length === 0 ? (
+                  <div className="int-empty">
+                    <span className="material-symbols-outlined">chat</span>
+                    <h3>No mutual matches yet</h3>
+                    <p>Once both users accept interests, chat will be available here.</p>
+                  </div>
+                ) : (
+                  <div className="int-list">
+                    {matches.map(m => (
+                      <div className="int-card" key={m.interestId}>
+                        {renderUser(m.user)}
+                        <div className="int-actions">
+                          <Link to={`/chat?partner=${m.user._id}`} className="btn-accept">
+                            <span className="material-symbols-outlined">chat</span> Chat
+                          </Link>
                         </div>
                       </div>
                     ))}
