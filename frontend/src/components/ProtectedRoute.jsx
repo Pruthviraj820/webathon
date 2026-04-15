@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   if (loading) {
     return (
       <div className="loading-screen">
-        <div className="brand">SacredMatch</div>
+        <div className="brand">Milan Setu</div>
         <div className="spinner"></div>
       </div>
     );

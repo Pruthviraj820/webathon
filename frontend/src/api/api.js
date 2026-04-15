@@ -65,8 +65,8 @@ export const verificationAPI = {
 
 // ─── Safety ──────────────────────────────────────────────
 export const safetyAPI = {
-  report: (reportedUser, reason, description) =>
-    request('POST', '/report', { reportedUser, reason, description }),
+  report: (reportedUserId, reason, description) =>
+    request('POST', '/report', { reportedUserId, reason, description }),
   block: (blockedUserId) => request('POST', '/block', { blockedUserId }),
   getBlocked: () => request('GET', '/block/list'),
 };

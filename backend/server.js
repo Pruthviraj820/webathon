@@ -18,7 +18,7 @@ import safetyRoutes from './routes/safetyRoutes.js';
 import horoscopeRoutes from './routes/horoscopeRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import authRoutes from './routes/authRoutes.js';
+import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import interestRoutes from './routes/interestRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';

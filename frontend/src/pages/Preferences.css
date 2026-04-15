@@ -1,0 +1,172 @@
+.preferences-page {
+  min-height: 100vh;
+  padding: 6rem 2rem 3rem;
+}
+.pref-inner {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+.pref-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.pref-header h1 {
+  font-family: var(--font-headline);
+  font-size: 2rem;
+  color: var(--on-surface);
+  margin-bottom: 0.5rem;
+}
+.pref-header p {
+  color: var(--on-surface-variant);
+  font-size: 1rem;
+}
+
+/* ── Form ─────────────────────────────── */
+.pref-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pref-section {
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-container-lowest);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1.5rem;
+}
+.pref-section h3 {
+  font-family: var(--font-headline);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  color: var(--primary);
+}
+.pref-section h3 .material-symbols-outlined {
+  font-size: 1.3rem;
+}
+
+.pref-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.pref-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.pref-section .form-field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+.pref-section .form-field input,
+.pref-section .form-field select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+}
+.pref-section .form-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ── Lifestyle Tags ──────────────────── */
+.pref-lifestyle-input {
+  display: flex;
+  gap: 0.5rem;
+}
+.pref-lifestyle-input input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  background: var(--surface-container-low);
+  font-size: 0.9rem;
+  color: var(--on-surface);
+}
+.pref-lifestyle-input input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.btn-add-lifestyle {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+}
+.btn-add-lifestyle:hover { opacity: 0.85; }
+
+.pref-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.pref-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-fixed);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.pref-chip button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.pref-chip button .material-symbols-outlined {
+  font-size: 0.9rem;
+}
+
+/* ── Actions ─────────────────────────── */
+.pref-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.pref-actions .btn-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2.5rem;
+  background: linear-gradient(45deg, var(--primary), var(--primary-container));
+  color: var(--on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(138,72,83,0.2);
+  transition: opacity 0.3s, transform 0.2s;
+}
+.pref-actions .btn-submit:hover { opacity: 0.9; }
+.pref-actions .btn-submit:active { transform: scale(0.97); }
+.pref-actions .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 600px) {
+  .pref-row, .pref-row-3 { grid-template-columns: 1fr; }
+}

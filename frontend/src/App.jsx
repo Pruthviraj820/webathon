@@ -13,6 +13,10 @@ import ProfileDetail from './pages/ProfileDetail';
 import Chat from './pages/Chat';
 import Interests from './pages/Interests';
 import Admin from './pages/Admin';
+import Verification from './pages/Verification';
+import Preferences from './pages/Preferences';
+import BlockedUsers from './pages/BlockedUsers';
+import Recommendations from './pages/Recommendations';
 
 function App() {
   return (
@@ -52,6 +56,38 @@ function App() {
           element={
             <ProtectedRoute>
               <Interests />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verification"
+          element={
+            <ProtectedRoute>
+              <Verification />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/preferences"
+          element={
+            <ProtectedRoute>
+              <Preferences />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/blocked"
+          element={
+            <ProtectedRoute>
+              <BlockedUsers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/recommendations"
+          element={
+            <ProtectedRoute>
+              <Recommendations />
             </ProtectedRoute>
           }
         />

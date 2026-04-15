@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="footer-grid">
         <div className="footer-brand-col">
-          <span className="footer-logo">SacredMatch</span>
+          <span className="footer-logo">Milan Setu</span>
           <p className="footer-desc">
             Defining the next generation of matrimonial connections through editorial
             elegance and deep trust.
@@ -21,11 +21,11 @@ export default function Footer() {
           </ul>
         </div>
         <div className="footer-col">
-          <h4>Company</h4>
+          <h4>Features</h4>
           <ul>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Contact Info</a></li>
-            <li><a href="#">Safety Center</a></li>
+            <li><Link to="/recommendations">Recommendations</Link></li>
+            <li><Link to="/verification">Verification</Link></li>
+            <li><Link to="/preferences">Preferences</Link></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>© 2024 SacredMatch. All rights reserved.</p>
+        <p>© 2024 Milan Setu. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -30,7 +30,12 @@ export default function Dashboard() {
     interestAPI.getReceived().then(d => setReceived(d.data || [])).catch(() => {});
     interestAPI.getSent().then(d => setSent(d.data || [])).catch(() => {});
     interestAPI.getMatches().then(d => setMatches(d.data || [])).catch(() => {});
-    recommendationAPI.getDaily().then(d => setDaily(d.data || d.recommendations || [])).catch(() => {});
+    recommendationAPI.getDaily().then(d => {
+      // Backend returns { data: [{ user: {...}, score }] } — extract user objects
+      const raw = d.data || d.recommendations || [];
+      const extracted = raw.map(item => item.user || item.candidate || item);
+      setDaily(extracted);
+    }).catch(() => {});
   }, []);
 
   const handleProfileUpdate = async (e) => {
@@ -100,6 +105,26 @@ export default function Dashboard() {
                 {user.role === 'admin' && <span className="badge badge-admin">Admin</span>}
               </div>
             </div>
+          </section>
+
+          {/* ── Quick Links ────────────────────────── */}
+          <section className="dash-quick-links fade-in">
+            <Link to="/verification" className="quick-link">
+              <span className="material-symbols-outlined">verified_user</span>
+              <span>Verify Profile</span>
+            </Link>
+            <Link to="/preferences" className="quick-link">
+              <span className="material-symbols-outlined">tune</span>
+              <span>Preferences</span>
+            </Link>
+            <Link to="/recommendations" className="quick-link">
+              <span className="material-symbols-outlined">auto_awesome</span>
+              <span>Recommendations</span>
+            </Link>
+            <Link to="/blocked" className="quick-link">
+              <span className="material-symbols-outlined">block</span>
+              <span>Blocked Users</span>
+            </Link>
           </section>
 
           {/* ── Tabs ───────────────────────────────── */}

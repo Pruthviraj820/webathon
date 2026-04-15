@@ -13,12 +13,14 @@ export default function SearchProfiles() {
   const [sentIds, setSentIds] = useState(new Set());
 
   useEffect(() => {
-    loadProfiles();
     if (user) {
+      loadProfiles();
       interestAPI.getSent().then(d => {
         const ids = new Set((d.data || []).map(i => i.receiver?._id || i.receiver));
         setSentIds(ids);
       }).catch(() => {});
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
@@ -26,7 +28,10 @@ export default function SearchProfiles() {
     setLoading(true);
     try {
       const data = await recommendationAPI.getTop();
-      setProfiles(data.data || data.recommendations || []);
+      // Backend returns { data: [{ user: {...}, score }] } — extract the user object
+      const raw = data.data || data.recommendations || [];
+      const extracted = raw.map(item => item.user || item.candidate || item);
+      setProfiles(extracted);
     } catch {
       setProfiles([]);
     } finally {
@@ -95,7 +100,14 @@ export default function SearchProfiles() {
 
           {/* ── Profile Grid ─────────────────────── */}
           <div className="search-results">
-            {loading ? (
+            {!user ? (
+              <div className="search-empty">
+                <span className="material-symbols-outlined">lock</span>
+                <h3>Sign in to discover profiles</h3>
+                <p>Create an account or log in to browse our curated selection of individuals.</p>
+                <Link to="/login" className="btn-view-profile">Sign In</Link>
+              </div>
+            ) : loading ? (
               <div className="search-loading"><div className="spinner"></div><p>Discovering profiles...</p></div>
             ) : filtered.length === 0 ? (
               <div className="search-empty">

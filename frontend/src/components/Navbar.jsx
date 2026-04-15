@@ -37,7 +37,8 @@ export default function Navbar() {
 
         <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
           <li><NavLink to="/" end onClick={() => setMenuOpen(false)}>Home</NavLink></li>
-          {user && <li><NavLink to="/search" onClick={() => setMenuOpen(false)}>Search Profiles</NavLink></li>}
+          {user && <li><NavLink to="/search" onClick={() => setMenuOpen(false)}>Search</NavLink></li>}
+          {user && <li><NavLink to="/recommendations" onClick={() => setMenuOpen(false)}>Matches</NavLink></li>}
           {user && <li><NavLink to="/interests" onClick={() => setMenuOpen(false)}>Interests</NavLink></li>}
           {user && (
             <li className="navbar-unread">

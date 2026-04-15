@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Footer from '../components/Footer';
 import './Register.css';
 
 export default function Register() {
-  const { register } = useAuth();
+  const { user, register } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,6 +14,9 @@ export default function Register() {
     dateOfBirth: '', religion: '', education: '', job: '',
     city: '', bio: '',
   });
+
+  // Redirect if already logged in
+  if (user) return <Navigate to="/dashboard" replace />;
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 

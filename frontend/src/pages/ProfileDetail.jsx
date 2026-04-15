@@ -19,15 +19,25 @@ export default function ProfileDetail() {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await matchAPI.calculate(userId);
-        setProfile(data.targetUser || data.matchedUser || data.user || null);
-        setMatchScore(data.score ?? data.matchResult?.score ?? null);
+        const resp = await matchAPI.calculate(userId);
+        // Backend returns { success, data: { matchedUser: {...}, score, breakdown } }
+        const d = resp.data || resp;
+        setProfile(d.matchedUser || d.targetUser || d.user || null);
+        setMatchScore(d.score ?? null);
       } catch {
         try {
           // fallback: fetch from recommendations
           const rec = await matchAPI.getRecommendations();
-          const found = (rec.data || rec.recommendations || []).find(u => u._id === userId);
-          if (found) setProfile(found);
+          const items = rec.data || rec.recommendations || [];
+          // Each item is { user: {...}, score }
+          const found = items.find(item => {
+            const u = item.user || item.candidate || item;
+            return u._id === userId;
+          });
+          if (found) {
+            setProfile(found.user || found.candidate || found);
+            setMatchScore(found.score ?? null);
+          }
         } catch { /* ignore */ }
       }
       try {
@@ -75,7 +85,7 @@ export default function ProfileDetail() {
     } catch (err) { setMsg(err.message); setTimeout(() => setMsg(''), 3000); }
   };
 
-  if (loading) return <div className="loading-screen"><div className="brand">SacredMatch</div><div className="spinner"></div></div>;
+  if (loading) return <div className="loading-screen"><div className="brand">Milan Setu</div><div className="spinner"></div></div>;
   if (!profile) return (
     <main className="profile-detail-page"><div className="profile-empty"><h2>Profile not found</h2><p>This profile may not exist or may be unavailable.</p></div></main>
   );

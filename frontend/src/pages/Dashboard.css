@@ -40,6 +40,39 @@
 }
 .badge-admin { background: var(--primary); color: var(--on-primary); }
 
+/* ── Quick Links ──────────────────────── */
+.dash-quick-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.quick-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  text-decoration: none;
+  color: var(--on-surface);
+  transition: all 0.3s;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+.quick-link:hover {
+  box-shadow: var(--shadow-editorial);
+  transform: translateY(-2px);
+  color: var(--primary);
+}
+.quick-link .material-symbols-outlined {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
 .dash-tabs {
   display: flex; gap: 0.25rem;
   background: var(--surface-container-low);
@@ -133,4 +166,5 @@
   .dash-header { flex-direction: column; text-align: center; }
   .stat-grid, .daily-grid { grid-template-columns: 1fr 1fr; }
   .edit-grid { grid-template-columns: 1fr; }
+  .dash-quick-links { grid-template-columns: 1fr 1fr; }
 }
