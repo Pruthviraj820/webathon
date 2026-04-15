@@ -19,6 +19,8 @@ const toPublicUser = (user) => {
   return obj;
 };
 
+router.get('/test', (req, res) => res.send('Auth working'));
+
 router.post('/register', async (req, res) => {
   try {
     const {

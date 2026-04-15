@@ -40,6 +40,44 @@ export const getAllUsers = async (req, res, next) => {
   }
 };
 
+// ─── Get verification docs for admin review ─────────────
+export const getVerificationDocuments = async (req, res, next) => {
+  try {
+    const status = req.query.status || 'pending';
+    const allowedStatuses = ['pending', 'verified', 'rejected', 'unverified', 'all'];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status filter. Use pending, verified, rejected, unverified, or all.',
+      });
+    }
+
+    const filter = {};
+    if (status !== 'all') filter.verification_status = status;
+
+    const users = findUsers(filter, { orderBy: 'updatedAt DESC' });
+    const docs = users
+      .filter((user) => Boolean(user.verification?.documentUrl))
+      .map((user) => ({
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        verificationStatus: user.verification?.status || 'unverified',
+        documentUrl: user.verification?.documentUrl || null,
+        reviewedBy: user.verification?.reviewedBy || null,
+        reviewedAt: user.verification?.reviewedAt || null,
+      }));
+
+    return res.json({
+      success: true,
+      total: docs.length,
+      data: docs,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ─── Ban a user ─────────────────────────────────────────
 export const banUser = async (req, res, next) => {
   try {

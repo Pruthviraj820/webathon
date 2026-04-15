@@ -1,21 +1,44 @@
 import express from 'express';
 import cloudinary from '../config/cloudinary.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { findUserById, updateUser } from '../models/User.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { uploadProfilePic } from '../middleware/upload.js';
 
 const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const allowedUpdateFields = [
   'name', 'age', 'gender', 'dateOfBirth', 'city', 'state', 'country',
   'education', 'occupation', 'job', 'salary', 'religion', 'caste', 'bio',
   'interests', 'preferredAgeMin', 'preferredAgeMax', 'preferredCity',
   'preferredEducation', 'preferredJob', 'preferredReligion', 'preferredCaste',
-  'lifestylePreferences',
+  'lifestylePreferences', 'profilePic', 'profilePhoto',
 ];
 
 router.get('/me', protect, async (req, res) => {
   try {
+    if (req.user.role === 'admin') {
+      return res.status(200).json({
+        user: {
+          _id: req.user._id,
+          name: req.user.name,
+          email: req.user.email,
+          role: req.user.role,
+        },
+        adminControls: [
+          { key: 'manage_users', path: '/api/admin/users' },
+          { key: 'review_verifications', path: '/api/admin/verification-documents' },
+          { key: 'moderate_reports', path: '/api/admin/reports' },
+          { key: 'verify_user', path: '/api/admin/verify/:userId' },
+          { key: 'ban_user', path: '/api/admin/ban/:userId' },
+        ],
+      });
+    }
+
     return res.status(200).json({ user: req.user });
   } catch (error) {
     return res.status(500).json({ message: 'Could not fetch profile.', error: error.message });
@@ -142,27 +165,40 @@ router.post('/upload-profile-pic', protect, (req, res, next) => {
   });
 }, async (req, res) => {
   try {
-    if (
-      !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET
-    ) {
-      return res.status(500).json({
-        message: 'Image upload is not configured. Set Cloudinary environment variables.',
-      });
-    }
-
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded. Use field name "profilePic".' });
     }
 
-    const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-    const result = await cloudinary.uploader.upload(dataUri, {
-      folder: 'marriage-bureau/profiles',
-      resource_type: 'image',
-    });
+    let profilePicUrl = '';
+    const cloudinaryConfigured = (
+      process.env.CLOUDINARY_CLOUD_NAME
+      && process.env.CLOUDINARY_API_KEY
+      && process.env.CLOUDINARY_API_SECRET
+    );
 
-    const user = await updateUser(req.user._id, { profilePic: result.secure_url });
+    if (cloudinaryConfigured) {
+      const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      const result = await cloudinary.uploader.upload(dataUri, {
+        folder: 'marriage-bureau/profiles',
+        resource_type: 'image',
+      });
+      profilePicUrl = result.secure_url;
+    } else {
+      const uploadsDir = path.join(__dirname, '..', 'uploads', 'profile-pics');
+      fs.mkdirSync(uploadsDir, { recursive: true });
+
+      const ext = req.file.mimetype.split('/')[1] || 'jpg';
+      const filename = `user-${req.user._id}-${Date.now()}.${ext}`;
+      const filePath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filePath, req.file.buffer);
+
+      profilePicUrl = `/uploads/profile-pics/${filename}`;
+    }
+
+    const user = updateUser(req.user._id, {
+      profilePic: profilePicUrl,
+      profilePhoto: profilePicUrl,
+    });
 
     return res.status(200).json({
       message: 'Profile picture updated.',
