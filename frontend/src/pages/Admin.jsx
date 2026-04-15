@@ -118,7 +118,7 @@ export default function Admin() {
                         </td>
                         <td>
                           <div className="admin-actions">
-                            <button className="btn-sm btn-verify" onClick={() => handleVerify(u._id, 'approve')} title="approve">
+                            <button className="btn-sm btn-verify" onClick={() => handleVerify(u._id, 'verified')} title="Verify">
                               <span className="material-symbols-outlined">verified</span>
                             </button>
                             <button className="btn-sm btn-ban" onClick={() => handleBan(u._id)} title="Ban">

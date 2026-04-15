@@ -33,17 +33,11 @@ export default function Chat() {
 
   // Auto-select partner from URL
   useEffect(() => {
-    if (!partnerParam) return;
-
-    const conv = conversations.find((c) => {
-      const userId = c.user?._id ?? c.user?.id;
-      const partnerId = c.partner?._id ?? c.partner?.id;
-      return userId?.toString() === partnerParam.toString()
-        || partnerId?.toString() === partnerParam.toString();
-    });
-
-    if (conv) setActivePartner(conv.user || conv.partner);
-    else setActivePartner({ _id: partnerParam, name: 'User' });
+    if (partnerParam && conversations.length > 0) {
+      const conv = conversations.find(c => c.user?._id === partnerParam || c.partner?._id === partnerParam);
+      if (conv) setActivePartner(conv.user || conv.partner);
+      else setActivePartner({ _id: partnerParam, name: 'User' });
+    }
   }, [partnerParam, conversations]);
 
   // Socket.io connection

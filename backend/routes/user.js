@@ -58,7 +58,7 @@ router.put('/update', protect, async (req, res) => {
       return res.status(400).json({ message: 'No valid fields to update.' });
     }
 
-    const user = await updateUser(req.user._id, updates);
+    const user = updateUser(req.user._id, updates);
     return res.status(200).json({ message: 'Profile updated.', user });
   } catch (error) {
     return res.status(500).json({ message: 'Could not update profile.', error: error.message });
@@ -67,7 +67,7 @@ router.put('/update', protect, async (req, res) => {
 
 router.get('/preferences', protect, async (req, res) => {
   try {
-    const user = await findUserById(req.user._id);
+    const user = findUserById(req.user._id);
     return res.status(200).json({
       preferences:
         user.partnerPreferences && Object.keys(user.partnerPreferences).length > 0
@@ -140,7 +140,7 @@ router.put('/preferences', protect, async (req, res) => {
       lifestylePreferences: partnerPreferences.lifestyle,
     };
 
-    const user = await updateUser(req.user._id, updates);
+    const user = updateUser(req.user._id, updates);
     return res.status(200).json({
       message: 'Partner preferences updated successfully.',
       preferences: user.partnerPreferences,

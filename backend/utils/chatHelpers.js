@@ -3,7 +3,7 @@ import { findOneInterest } from '../models/Interest.js';
 /**
  * Checks whether two users have a mutual interest (both directions accepted).
  */
-export async function hasMutualInterest(userId1, userId2) {
+export function hasMutualInterest(userId1, userId2) {
   const id1 = Number(userId1);
   const id2 = Number(userId2);
 
