@@ -1,14 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-<<<<<<< HEAD
-import User from '../models/User.js';
-import { registerUser } from '../controllers/authController.js';
-=======
 import {
   findUserByEmail, findUserByEmailWithPassword, createUser,
 } from '../models/User.js';
->>>>>>> dd4b5205f6259ced26d90ef94a68a2050533e2d7
 
 const router = express.Router();
 
@@ -27,11 +22,6 @@ const toPublicUser = (user) => {
 router.get('/test', (req, res) => res.send('Auth working'));
 
 router.post('/register', async (req, res) => {
-<<<<<<< HEAD
-  console.log('POST /api/auth/register hit');
-  console.log('Register request body:', req.body);
-  return registerUser(req, res);
-=======
   try {
     const {
       name, email, password, age, gender, education,
@@ -65,7 +55,6 @@ router.post('/register', async (req, res) => {
     }
     return res.status(500).json({ message: 'Registration failed.', error: error.message });
   }
->>>>>>> dd4b5205f6259ced26d90ef94a68a2050533e2d7
 });
 
 router.post('/login', async (req, res) => {

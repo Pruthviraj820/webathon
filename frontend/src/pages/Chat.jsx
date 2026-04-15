@@ -47,27 +47,29 @@ export default function Chat() {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      if (user?._id) socket.emit('join', user._id);
+      if (activePartner?._id) socket.emit('join_chat', { partnerId: activePartner._id });
     });
 
-    socket.on('receiveMessage', (msg) => {
+    socket.on('receive_message', (msg) => {
       setMessages(prev => [...prev, msg]);
       // Update last message in conversations
       setConversations(prev => prev.map(c => {
         const cId = c.user?._id || c.partner?._id;
-        if (cId === msg.sender || cId === msg.receiver) {
-          return { ...c, lastMessage: msg };
+        const senderId = msg.sender?._id || msg.sender;
+        if (cId?.toString() === senderId?.toString() || cId?.toString() === msg.receiver?.toString()) {
+          return { ...c, lastMessage: msg.text };
         }
         return c;
       }));
     });
 
     return () => socket.disconnect();
-  }, [token, user]);
+  }, [token, user, activePartner]);
 
   // Load messages when partner changes
   useEffect(() => {
     if (!activePartner?._id) return;
+    socketRef.current?.emit('join_chat', { partnerId: activePartner._id });
     setLoadingMessages(true);
     chatAPI.getMessages(activePartner._id)
       .then(d => {
@@ -85,15 +87,15 @@ export default function Chat() {
 
   const handleSend = useCallback(() => {
     if (!text.trim() || !activePartner?._id) return;
-    const msgData = { receiver: activePartner._id, content: text.trim() };
-    socketRef.current?.emit('sendMessage', msgData);
+    const msgData = { receiverId: activePartner._id, text: text.trim() };
+    socketRef.current?.emit('send_message', msgData);
 
     // Optimistic add
     const optimistic = {
       _id: Date.now().toString(),
       sender: user._id,
       receiver: activePartner._id,
-      content: text.trim(),
+      text: text.trim(),
       createdAt: new Date().toISOString(),
     };
     setMessages(prev => [...prev, optimistic]);
@@ -152,7 +154,7 @@ export default function Chat() {
                   </div>
                   <div className="convo-info">
                     <h4>{p.name || 'Unknown'}</h4>
-                    <p>{c.lastMessage?.content?.slice(0, 40) || 'Start a conversation...'}</p>
+                    <p>{(typeof c.lastMessage === 'string' ? c.lastMessage : '').slice(0, 40) || 'Start a conversation...'}</p>
                   </div>
                   {c.unreadCount > 0 && <span className="convo-unread">{c.unreadCount}</span>}
                 </div>
@@ -204,7 +206,7 @@ export default function Chat() {
                   return (
                     <div key={m._id} className={`msg ${isMine ? 'msg-sent' : 'msg-received'}`}>
                       <div className="msg-bubble">
-                        <p>{m.content}</p>
+                        <p>{m.text}</p>
                       </div>
                       <span className="msg-time">{formatTime(m.createdAt)}</span>
                     </div>
