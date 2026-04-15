@@ -1,15 +1,18 @@
 import { findOneInterest } from '../models/Interest.js';
 
 /**
- * Checks whether two users have a mutual interest (both directions accepted).
+ * Checks whether two users have a mutual interest (at least one accepted direction).
+ * Chat is allowed if either user has accepted the other's interest.
  */
 export async function hasMutualInterest(userId1, userId2) {
   const id1 = Number(userId1);
   const id2 = Number(userId2);
 
-  const forward = findOneInterest({ sender: id1, receiver: id2, status: 'accepted' });
-  const reverse = findOneInterest({ sender: id2, receiver: id1, status: 'accepted' });
-  return Boolean(forward && reverse);
+  const forward = await findOneInterest({ sender: id1, receiver: id2, status: 'accepted' });
+  if (forward) return true;
+
+  const reverse = await findOneInterest({ sender: id2, receiver: id1, status: 'accepted' });
+  return Boolean(reverse);
 }
 
 /**

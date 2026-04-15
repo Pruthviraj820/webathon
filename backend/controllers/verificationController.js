@@ -7,8 +7,8 @@ import { findUserById, updateUser } from '../models/User.js';
 // ─── Upload ID document (mock) ──────────────────────────
 export const uploadDocument = async (req, res, next) => {
   try {
-    const currentUser = await findUserById(req.user._id);
-    if (currentUser.verification.status === 'verified') {
+    const currentUser = req.user;
+    if (currentUser.verification && currentUser.verification.status === 'verified') {
       return res.status(400).json({ success: false, message: 'Already verified' });
     }
 
@@ -33,8 +33,15 @@ export const uploadDocument = async (req, res, next) => {
 // ─── Check verification status ──────────────────────────
 export const getVerificationStatus = async (req, res, next) => {
   try {
-    const user = await findUserById(req.user._id);
-    return res.json({ success: true, data: user.verification });
+    // Use req.user directly — already populated by middleware
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User not found' });
+    }
+    return res.json({ 
+      success: true, 
+      data: user.verification || { status: 'unverified', documentUrl: null, reviewedBy: null, reviewedAt: null },
+    });
   } catch (error) {
     next(error);
   }
@@ -59,7 +66,7 @@ export const adminVerifyUser = async (req, res, next) => {
 
     const updated = await updateUser(user._id, {
       verification: {
-        ...user.verification,
+        ...(user.verification || {}),
         status: action === 'approve' ? 'verified' : 'rejected',
         reviewedBy: req.user._id,
         reviewedAt: new Date(),

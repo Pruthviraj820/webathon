@@ -4,13 +4,13 @@
 const errorHandler = (err, req, res, _next) => {
   console.error(`[ERROR] ${err.message}`, err.stack);
 
-  // SQLite unique-constraint error → 409
-  if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+  // PostgreSQL unique-constraint error → 409
+  if (err.code === '23505') {
     return res.status(409).json({ success: false, message: 'Duplicate entry' });
   }
 
-  // SQLite constraint error → 400
-  if (err.code && typeof err.code === 'string' && err.code.startsWith('SQLITE_CONSTRAINT')) {
+  // PostgreSQL check-constraint / foreign-key error → 400
+  if (err.code === '23503' || err.code === '23514') {
     return res.status(400).json({ success: false, message: err.message });
   }
 

@@ -14,7 +14,7 @@ export const auth = async (req, res, next) => {
     const token = header.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
 
-    const user = findUserById(decoded.id);
+    const user = await findUserById(decoded.id);
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
